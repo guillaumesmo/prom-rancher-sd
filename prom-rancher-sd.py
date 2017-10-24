@@ -20,6 +20,8 @@ def get_current_metadata_entry(entry):
         return json.loads(response.read().decode('utf8 '))
 
 def is_monitored_service(service):
+    # don't monitor container's that don't have IP yet
+    return false if 'primary_ip' not in service
     return 'labels' in service and 'com.prometheus.monitoring' in service['labels'] and service['labels']['com.prometheus.monitoring'] == 'true'
 
 def is_node_exporter_service(service):
@@ -33,7 +35,7 @@ def monitoring_config(service):
             'name': service['name'],
             'service_name': service['service_name'],
             'stack_name': service['stack_name'],
-            'metrics_path': service['labels']['com.prometheus.metricspath'] if 'com.prometheus.metricspath' in service['labels'] else '/metrics'
+            '__metrics_path__': service['labels']['com.prometheus.metricspath'] if 'com.prometheus.metricspath' in service['labels'] else '/metrics'
         },
        "host-uuid": service['host_uuid']
     }
