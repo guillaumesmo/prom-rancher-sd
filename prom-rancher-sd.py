@@ -8,7 +8,9 @@ import urllib.parse
 import urllib.request
 import json
 import shutil
+import os
 
+outputFolder=os.getenv('OUTPUT_FOLDER', '/prom-rancher-sd-data').rstrip('/')
 
 def get_current_metadata_entry(entry):
     headers = {
@@ -83,6 +85,6 @@ def write_config_file(filename,get_config_function):
 if __name__ == '__main__':
     while True:
         time.sleep(5)
-        write_config_file('/prom-rancher-sd-data/rancher.json',get_monitoring_config)
-        write_config_file('/prom-rancher-sd-data/node_exporter.json',get_node_monitoring_config)
+        write_config_file('{0}/rancher.json'.format(outputFolder),get_monitoring_config)
+        write_config_file('{0}/node_exporter.json'.format(outputFolder),get_node_monitoring_config)
 

@@ -8,6 +8,7 @@ prom-rancher-sd polls [Rancher's metadata service](http://docs.rancher.com/ranch
 
 A configuration file suitable for use by [Prometheus](http://prometheus.io/) is written to enable services to be monitored automatically. 
 
+The configuration file will be written to the directory `/prom-rancher-sd-data` by default, use the `OUTPUT_FOLDER` environment variable to change the directory.
 
 I changed a bit the cowhand approach by enriching the labels and assigning some sensible defaults. 
 
