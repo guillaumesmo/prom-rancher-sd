@@ -3,6 +3,7 @@
 # Copyright 2016 Daniel Dent (https://www.danieldent.com/)
 # Copyright 2016 Virgil Chereches (virgil.chereches@gmx.net)
 
+import copy
 import time
 import urllib.parse
 import urllib.request
@@ -59,8 +60,18 @@ def node_monitoring_config(service):
 def get_hosts_dict(hosts):
    return { x['uuid']:x['hostname'] for x in hosts }
 
+def unwind_paths(services):
+    for service in services:
+        paths = service['labels']['__metrics_path__'].split(',')
+        for path in paths:
+            newservice = copy.deepcopy(service)
+            newservice['labels']['__metrics_path__'] = path
+            if len(paths) > 1:
+                newservice['labels']['metrics_path'] = path
+            yield newservice
+
 def get_monitoring_config():
-    return list(map(monitoring_config, filter(is_monitored_service, get_current_metadata_entry('containers'))))
+    return list(unwind_paths(map(monitoring_config, filter(is_monitored_service, get_current_metadata_entry('containers')))))
 
 def get_node_monitoring_config():
     return list(map(node_monitoring_config, filter(is_node_exporter_service, get_current_metadata_entry('containers'))))
